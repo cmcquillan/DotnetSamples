@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Exceptions
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
@@ -62,7 +63,7 @@ namespace Exceptions
             }
             // Filter is not passed but subsequent exception is caught.
             catch (CustomException ex1)
-            when (ex1 is IndexOutOfRangeException)
+            when (ex1 is DerivedCustomException)
             {
                 Console.WriteLine("You should not see this.");
             }
@@ -122,6 +123,30 @@ namespace Exceptions
                 Console.WriteLine("Caught a re-throw with an empty throw statement.");
                 Console.WriteLine(ex.ToString());
             }
+
+            try
+            {
+                TestWithInnerException();
+            }
+            // Exceptions can also have nested exceptions.
+            // This is common when you want to provide additional
+            // information on what caused the error your code experienced. 
+            catch (CustomException ex)
+            {
+                Console.WriteLine("Caught with an inner exception.  See the stack output.");
+
+            }
+
+            try
+            {
+                var task = TestThrowAsyncException();
+                var result = task.Result;
+            }
+            catch (AggregateException ex)
+            {
+                Console.WriteLine("Caught an aggregate exception.");
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private static void TestThrowBasicException()
@@ -152,6 +177,28 @@ namespace Exceptions
             {
                 throw;
             }
+        }
+
+        private static void TestWithInnerException()
+        {
+            try
+            {
+                TestThrowBasicException();
+            }
+            // We catch the exception and wrap it in our
+            // own to provide additional context for the error.
+            catch (Exception ex)
+            {
+                throw new CustomException("Problem with inner problem found.", ex);
+            }
+        }
+
+        private static async Task<int> TestThrowAsyncException()
+        {
+            throw new CustomException("Async problem found.");
+
+            await Task.CompletedTask;
+            return 10;
         }
     }
 }
