@@ -1,0 +1,3 @@
+# This is my resgen comment
+Hello=Hallo Welt!
+Goodbye=Auf Wiedersehen Welt!
