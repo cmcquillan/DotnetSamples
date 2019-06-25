@@ -1,0 +1,2 @@
+# Samples for .NET Concepts
+When I feel the need to brush up on a subject I add a quick console project here. If you like people practicing their skillset then feel free to take a look. Otherwise, nothing to see here!
